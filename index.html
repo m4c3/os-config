@@ -102,6 +102,30 @@
         }
       });
 
+      var Audio = React.createClass({
+        handleSelectAudio: function(event) {
+          this.props.handleUpdateAudio(event.target.value);
+        },
+
+        render: function() {
+          return (
+            <div className="panel panel-default">
+              <div className="panel-heading">
+                <h3 className="panel-title">Audio output</h3>
+              </div>
+              <div className="panel-body">
+                <form className="form-inline">
+                  <select className="form-control" onChange={this.handleSelectAudio} value={this.props.audio}>
+                    <option value="local">Use RCA jack (default)</option>
+                    <option value="hdmi">Use HDMI</option>
+                  </select>
+                </form>
+              </div>
+            </div>
+          );
+        }
+      });
+
       var Channel = React.createClass({
         handleSelectChannel: function(event) {
           this.props.handleUpdateChannel(event.target.value);
@@ -328,6 +352,7 @@
             branding: null,
             wifi: null,
             channel: "stable",
+            audio: "local",
             resolution: null,
             network: null,
           }
@@ -339,6 +364,10 @@
 
         handleUpdateBranding: function(branding) {
           this.setState({branding: branding});
+        },
+
+        handleUpdateAudio: function(audio) {
+          this.setState({audio: audio});
         },
 
         handleUpdateChannel: function(channel) {
@@ -372,6 +401,7 @@
                 this.state.network.gw + "\n" +
                 this.state.network.dns + "\n");
           config.file("channel", this.state.channel);
+          config.file("audio", this.state.audio);
           var blob = zip.generate({type:"blob"});
           saveAs(blob, "config.zip");
           event.preventDefault();
@@ -395,6 +425,7 @@
                 <div className="col-md-7">
                   <Branding handleUpdateBranding={this.handleUpdateBranding} image={this.state.branding}/>
                   <Resolution handleUpdateResolution={this.handleUpdateResolution} resolution={this.state.resolution}/>
+                  <Audio handleUpdateAudio={this.handleUpdateAudio} audio={this.state.audio}/>
                   <Channel handleUpdateChannel={this.handleUpdateChannel} channel={this.state.channel}/>
                 </div>
               </div>
